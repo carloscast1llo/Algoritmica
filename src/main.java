@@ -14,7 +14,8 @@ public class main {
         int[] vector12 = new int[]{-10,-2,0,3,79,19,28,30,42,55}; // Sesion 1.3
 
         System.out.println(sumaPositivos(vector));
-        System.out.println(elementoSolitario(vector2));
+        System.out.println(elementoSolitario2(vector2));
+        System.out.println();
         System.out.println(parImpar(vector3));
         System.out.println(ejDyVsept(vector5, vector6));
         System.out.println(Check2pos(vector7, vector8, 9));
@@ -22,18 +23,15 @@ public class main {
         System.out.println(elementoEspecial(vector10));
         System.out.println(minArrayRotado(vector11));
         System.out.println(elementoEspecial2(vector12));
-
-
-
     }
 
-    // SESION 1.1
+    // SESION 1.1 - 2 veces
     public static int sumaPositivos(int [] vector){
         return sumaPositivosAux(vector, 0, vector.length-1);
     }
     public static int sumaPositivosAux(int [] vector,int i0,int iN){
         if(i0 == iN){
-            if(vector[i0]  > 0) {
+            if(vector[i0] > 0) {
                 return vector[i0];
             } else {
                 return 0;
@@ -46,7 +44,7 @@ public class main {
         }
     }
 
-    // SESION 1.2
+    // SESION 1.2 - 2 veces - Ver again
     public static int elementoSolitario(int [] vector2){
         return elementoSolitarioAux(vector2, 0, vector2.length-1);
     }
@@ -73,6 +71,32 @@ public class main {
         }
     }
 
+    public static int elementoSolitario2(int [] vector2){
+        return elementoSolitarioAux2(vector2, 0, vector2.length-1);
+    }
+    public static int elementoSolitarioAux2(int [] vector2, int i0, int iN){
+        if (i0 == iN){
+            return vector2[i0];
+        }else {
+            int k = (i0 + iN) / 2;
+            if (vector2[k] == vector2[k+1]){
+                if ((iN-k+2) % 2 == 0){
+                    return elementoEspecialAux2(vector2, k+2, iN);
+                }else {
+                    return elementoEspecialAux2(vector2, i0, k-1);
+                }
+            }else if (vector2[k-1] == vector2[k]){
+                if (((k-2) - i0 % 2) == 0){
+                    return elementoEspecialAux2(vector2, i0, k-2);
+                }else {
+                    return elementoEspecialAux2(vector2, k+1, iN);
+                }
+            }else {
+                return vector2[k];
+            }
+        }
+    }
+
     // Examen 2022
     public static int parImpar(int [] vector3){
         return parImparAux(vector3, 0, vector3.length-1);
@@ -90,7 +114,7 @@ public class main {
         }
     }
     public static boolean esPar(int n){
-        return n%2 == 0;
+        return n % 2 == 0;
     }
 
     // Examen 2021
@@ -114,7 +138,7 @@ public class main {
         }
     }
 
-    // Examen Junio 2020
+    // Examen Junio 2020 - 2 veces
     public static boolean Check2pos (int[] vector7, int[] vector8, int v){
         boolean stop = false, resultado=false;
         int i = 0;
@@ -143,7 +167,7 @@ public class main {
         }
     }
 
-    // Examen Diciembre 2020
+    // Examen Diciembre 2020 - 2 veces
     public static int maxArrayColina(int[] vector9){
         return maxArrayColinaAux(vector9, 0, vector9.length-1);
     }
@@ -236,7 +260,7 @@ public class main {
         }
     }
 
-    //Sesion 1.3
+    //Sesion 1.3 - 2 veces
     public static int elementoEspecial2(int[] vector){
         return elementoEspecialAux2(vector, 0, vector.length-1);
     }
@@ -259,11 +283,69 @@ public class main {
         }
     }
 
+
     //Sesion 1.4
     public static int longMaxSubArrayOrdenado(int[] vector){
         return longMaxSubArrayOrdenadoAux(vector, 0, vector.length-1);
     }
     public static int longMaxSubArrayOrdenadoAux(int[] vector, int i0, int iN){
-        return 0;
+        if (i0 == iN){
+            return 1;
+        }else {
+            int k = (i0 + iN) / 2;
+            int x = longMaxSubArrayOrdenadoAux(vector, i0, k);
+            int y = longMaxSubArrayOrdenadoAux(vector, k+1, iN);
+            int z = longMaxSubArrayOrdenadoCruzada(vector, i0, iN, k);
+            return Math.max(x,Math.max(y,z));
+        }
     }
+    public static int longMaxSubArrayOrdenadoCruzada(int[] vector, int i0, int iN, int k){
+        int i = k;
+        while (i0 < i && vector[i-1] <= vector[i]){
+            i--;
+        }
+        int j = k;
+        while (j < iN && vector[j+1] >= vector[j]){
+            j++;
+        }
+
+        return j-i+1;
+    }
+
+    // EJERCICIO PDF
+    public static int maxSubArray(int[] vector, int i0, int iN){
+        return maxSubArrayAux(vector, 0, vector.length-1);
+    }
+    public static int maxSubArrayAux(int[] vector, int i0, int iN){
+        if (i0 == iN){
+            return vector[i0];
+        }else {
+            int k = (i0 + iN) / 2;
+
+            int x = maxSubArrayAux(vector, i0, k);
+            int y = maxSubArrayAux(vector, k+1, iN);
+            int z = maxSubArrayCruzada(vector, i0, iN, k);
+            return Math.max(x, Math.max(y,z));
+        }
+    }
+    public static int maxSubArrayCruzada(int[] vector, int i0, int iN, int k){
+        int sumaMax = Integer.MIN_VALUE;
+        int suma = 0;
+        for(int i = k; i >= i0; i--){
+            suma += vector[i];
+            if (suma > sumaMax){
+                sumaMax = suma;
+            }
+        }
+        suma = sumaMax;
+        for(int j = k; j <= iN; j--){
+            suma += vector[j];
+            if (suma > sumaMax){
+                sumaMax = suma;
+            }
+        }
+
+        return sumaMax;
+    }
+
 }
