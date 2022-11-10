@@ -1,5 +1,5 @@
-public class main {
-    public static void main(String args[]) {
+public class DyV {
+    public static void main(String[] args) {
         int[] vector = new int[]{-1,0,2,3,10,12,-23,-24,-7}; // Sesion 1.1
         int[] vector2 = new int[]{1,1,4,5,5,7,7,8,8,9,9}; // Sesion 1.2
         int[] vector3 = new int[]{2,5,8,9,22,34,45,98,101}; //Examen 2022
@@ -12,6 +12,7 @@ public class main {
         int[] vector10 = new int[]{1,2,2,3,3,4,0,0,1}; //Examen 2019
         int[] vector11 = new int[]{4,7,10,15,23,32,1,2,3}; //Examen 2018
         int[] vector12 = new int[]{-10,-2,0,3,79,19,28,30,42,55}; // Sesion 1.3
+        int[] follada = new int[]{-10};
 
         System.out.println(sumaPositivos(vector));
         System.out.println(elementoSolitario2(vector2));
@@ -23,6 +24,7 @@ public class main {
         System.out.println(elementoEspecial(vector10));
         System.out.println(minArrayRotado(vector11));
         System.out.println(elementoEspecial2(vector12));
+        System.out.print(examenOrdi(follada));
     }
 
     // SESION 1.1 - 2 veces
@@ -347,6 +349,29 @@ public class main {
 
         return sumaMax;
     }
+
+    public static int examenOrdi(int[] vector){
+        return examenOrdiAux(vector, 0, vector.length-1);
+    }
+    public static int examenOrdiAux(int[] vector, int i0, int iN){
+        if (i0 == iN){
+            if (vector[i0] > 0){
+                return i0;
+            }else {
+                return -1;
+            }
+        }else {
+            int k = (i0 + iN) / 2;
+            if (vector[k] > 0){
+                return examenOrdiAux(vector, i0, k);
+            }else if (vector[k] < 0) {
+                return examenOrdiAux(vector, k + 1, iN);
+            }
+        }
+
+        return -1;
+    }
+
 
 
 }
