@@ -15,6 +15,8 @@ public class BackTracking {
         int[] comienzo = new int[]{5, 2, 4, 2, 6, 0, 6, 2};
         int[] fin = new int[]{9, 4, 5, 5, 7, 3, 8, 5};
 
+        int[] pesosExamen = new int[]{1, 3, 2, 5, 1, 4, 2, 1};
+
        // System.out.println(dosSubconjuntos(vector, 10));
         System.out.println("1.2: " + dosSubconjuntos(vector, 11));
         System.out.println("1.1: " + hayRepartoEquitativo(vector1));
@@ -47,7 +49,63 @@ public class BackTracking {
         for (int i = 0; i < resultadoCF.length; i++) {
             System.out.print(resultadoCF[i] + " ");
         }
+        System.out.println();
 
+        int[] resultadoExamen = distribucionCarga2(pesosExamen, 10);
+        System.out.print("1.5: ");
+        for (int i = 0; i < resultadoExamen.length; i++) {
+            System.out.print(resultadoExamen[i] + " ");
+        }
+
+    }
+
+    public static int[] distribucionCarga2 (int[] pesos, int pMax){
+        int[] distribucion = new int[pesos.length];
+        int[] mejorDistribucion = new int[pesos.length];
+        int contenedor1 = 0;
+        int contenedor2 = 0;
+        Entero mejorDiferencia= new Entero(Integer.MAX_VALUE);
+        for (int i=0; i<distribucion.length;i++){
+            distribucion[i]=0; mejorDistribucion[i]=0;
+        }
+        distribucionCarga2Aux(pesos, pMax, 0, distribucion, mejorDistribucion, contenedor1, contenedor2, mejorDiferencia);
+
+        return mejorDistribucion;
+    }
+
+    public static void distribucionCarga2Aux(int[] pesos, int pMax, int nivel, int[] distribucion, int[] mejorDistribucion, int contenedor1, int contenedor2, Entero mejorDiferencia){
+        if (nivel==pesos.length){
+            if ((Math.abs(contenedor1-contenedor2)) < mejorDiferencia.getValor()) {
+                mejorDiferencia.setValor(Math.abs(contenedor1-contenedor2));
+                for (int i = 0; i < distribucion.length; i++) {
+                    mejorDistribucion[i] = distribucion[i];
+                }
+            }
+        } else{
+            for (int c=1; c<3; c++){
+                if ( c == 1 && contenedor1 + pesos[nivel] <= pMax || c == 2 && contenedor2 + pesos[nivel] <= pMax){
+                    if (c == 1){
+                        distribucion[nivel] = c;
+                        contenedor1 += pesos[nivel];
+                    }
+                    if (c == 2){
+                        distribucion[nivel] = c;
+                        contenedor2 += pesos[nivel];
+                    }
+
+                    distribucionCarga2Aux(pesos, pMax, nivel + 1, distribucion, mejorDistribucion, contenedor1, contenedor2, mejorDiferencia);
+
+                    if (c == 1){
+                        distribucion[nivel] = c;
+                        contenedor1 -= pesos[nivel];
+                    }
+                    if (c == 2){
+                        distribucion[nivel] = c;
+                        contenedor2 -= pesos[nivel];
+                    }
+                }
+            }
+        }
     }
 
     // BackTracking
