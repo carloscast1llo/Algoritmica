@@ -112,6 +112,18 @@ public class Voraces {
             }
         } else { System.out.println("No hay Ranas");}
 
+        // Examen Junio 2021
+
+        int nDiputados = 145;
+        int mayoriaABS = (nDiputados/2)+1;
+        float umbralPacto = 0.5F;
+        ArrayList<Partido> misPartidos = new ArrayList<Partido>();
+        misPartidos.add(new Partido("extIZQ",10,1F)); misPartidos.add(new Partido("muyIZQ",10,3F));
+        misPartidos.add(new Partido("IZQ",50,4F)); misPartidos.add(new Partido("Centro",5,5F));
+        misPartidos.add(new Partido("Derecha",49,6F)); misPartidos. add(new Partido("muyDerecha",10,7F));
+        misPartidos.add(new Partido("extDerecha",10,10F));
+        ArrayList<Partido> solucion = greedyPactometer(misPartidos, mayoriaABS, umbralPacto);
+
     }
 
     //Ej Diapositivas 1
@@ -331,5 +343,105 @@ public class Voraces {
             }
         }
         return mayor;
+    }
+    private static int seleccionarCandidatoDardoNormal(ArrayList<Integer> valores){
+        int mayor = Integer.MIN_VALUE;
+        for (int i = 0; i < valores.size(); i++){
+            if (valores.get(i) > mayor){
+                mayor = valores.get(i);
+            }
+        }
+
+           return mayor;
+    }
+
+    //Examen Julio 2021
+    public static ArrayList<Partido> greedyPactometer(ArrayList<Partido> misPartidos, int mayoriaABS, float umbralPacto){
+        ArrayList<Partido> solucion = new ArrayList<>();
+        Partido mayorNumDiputados = seleccionarPartidoGobierno(misPartidos);
+        misPartidos.remove(mayorNumDiputados);
+        solucion.add(mayorNumDiputados);
+        mayoriaABS -= mayorNumDiputados.getDiputados();
+
+        while(!misPartidos.isEmpty() && mayoriaABS > 0){
+            Partido candidato = seleccionarCandidatoPartido(misPartidos, mayorNumDiputados);
+            misPartidos.remove(candidato);
+            if(candidato.Perjuicio(mayorNumDiputados) < umbralPacto){
+                solucion.add(candidato);
+                mayoriaABS -= candidato.getDiputados();
+            }
+        }
+
+        if(!solucion.isEmpty()){ return solucion;}
+        else return null;
+    }
+    private static Partido seleccionarPartidoGobierno(ArrayList<Partido> misPartidos){
+        Partido mayorDiputados = null;
+        int mayor = Integer.MIN_VALUE;
+
+        for(Partido partido : misPartidos){
+            if(mayorDiputados == null || partido.getDiputados() > mayor){
+                mayorDiputados = partido;
+                mayor = partido.getDiputados();
+            }
+        }
+        return mayorDiputados;
+    }
+    private static Partido seleccionarCandidatoPartido(ArrayList<Partido> partidos, Partido partidoPrincipal){
+        Partido p = null;
+        float perjuicioMejor = Integer.MAX_VALUE;
+
+        for(Partido partido : partidos){
+            if(p == null || partidoPrincipal.Perjuicio(partido) < perjuicioMejor){
+                p = partido;
+                perjuicioMejor = partidoPrincipal.Perjuicio(partido);
+            } else if(partidoPrincipal.Perjuicio(partido) == perjuicioMejor){
+                if(partido.getDiputados() > p.getDiputados()){
+                    p = partido;
+                    perjuicioMejor = partidoPrincipal.Perjuicio(partido);
+                }
+            }
+        }
+
+        return p;
+    }
+
+    //Examen Julio 2022
+    public static void crearEquiposVoraz(ArrayList<Concursante> supervivientes, ArrayList<Concursante> equipo1, ArrayList<Concursante> equipo2){
+        double fuerza1 = 0, fuerza2 = 0;
+
+        while(!supervivientes.isEmpty()){
+            Concursante candidato = seleccionarCandidatoConcursante(supervivientes);
+            supervivientes.remove(candidato);
+            double fuerza = calcularFuerza(candidato.getEdad(), candidato.getPeso(), candidato.isGenero());
+            if(fuerza1 <= fuerza2){
+                equipo1.add(candidato);
+                fuerza1 += fuerza;
+            } else {
+                equipo2.add(candidato);
+                fuerza2 += fuerza;
+            }
+        }
+    }
+    private static Concursante seleccionarCandidatoConcursante(ArrayList<Concursante> supervivientes){
+        Concursante masFuerte = null;
+        double masFuerza = Double.MIN_VALUE;
+
+        for(Concursante concursante : supervivientes){
+            double fuerza = calcularFuerza(concursante.getEdad(), concursante.getPeso(), concursante.isGenero());
+            if(masFuerte == null || fuerza > masFuerza){
+                masFuerte = concursante;
+                masFuerza = fuerza;
+            }
+        }
+
+        return masFuerte;
+    }
+    private static double calcularFuerza(int edad, int peso, boolean genero){
+        double g;
+        if(!genero) { g = 1.3;}
+        else { g = 1;}
+
+        return (double) 1 / edad * 1 / peso * g;
     }
 }
